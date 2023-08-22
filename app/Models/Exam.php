@@ -25,4 +25,34 @@ class Exam extends Model
         'random_answer',
         'show_answer',
     ];
+
+    /**
+     * lesson
+     *
+     * @return void
+     */
+    public function lesson()
+    {
+        return $this->belongsTo(Lesson::class);
+    }
+
+    /**
+     * classroom
+     *
+     * @return void
+     */
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class);
+    }
+
+    /**
+     * questions
+     *
+     * @return void
+     */
+    public function questions()
+    {
+        return $this->hasMany(Question::class)->orderBy('id', 'DESC');
+    }
 }

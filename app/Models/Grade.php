@@ -25,4 +25,34 @@ class Grade extends Model
         'total_correct',
         'grade',
     ];
+
+    /**
+     * exam
+     *
+     * @return void
+     */
+    public function exam()
+    {
+        return $this->belongsTo(Exam::class);
+    }
+
+    /**
+     * exam_session
+     *
+     * @return void
+     */
+    public function exam_session()
+    {
+        return $this->belongsTo(ExamSession::class);
+    }
+
+    /**
+     * student
+     *
+     * @return void
+     */
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
 }

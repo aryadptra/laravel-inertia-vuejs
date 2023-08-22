@@ -20,4 +20,34 @@ class ExamGroup extends Model
         'exam_session_id',
         'student_id',
     ];
+
+    /**
+     * exam
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function exam()
+    {
+        return $this->belongsTo(Exam::class);
+    }
+
+    /**
+     * exam_session
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function exam_session()
+    {
+        return $this->belongsTo(ExamSession::class);
+    }
+
+    /**
+     * student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
 }

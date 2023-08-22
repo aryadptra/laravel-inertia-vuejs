@@ -21,4 +21,24 @@ class ExamSession extends Model
         'start_time',
         'end_time',
     ];
+
+    /**
+     * exam_groups
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function exam_groups()
+    {
+        return $this->hasMany(ExamGroup::class);
+    }
+
+    /**
+     * exam
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function exam()
+    {
+        return $this->belongsTo(Exam::class);
+    }
 }
