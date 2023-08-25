@@ -1,34 +1,20 @@
 <template>
     <Head>
-        <title>Siswa - Aplikasi Ujian Online</title>
+        <title>Ujian - Aplikasi Ujian Online</title>
     </Head>
     <div class="container-fluid mb-5 mt-5">
         <div class="row">
             <div class="col-md-8">
                 <div class="row">
-                    <div class="col-md-5 col-12 mb-2">
-                        <div class="row">
-                            <div class="col-md-6 col-12 mb-2">
-                                <Link
-                                    href="/admin/students/create"
-                                    class="btn btn-md btn-primary border-0 shadow w-100"
-                                    type="button"
-                                    ><i class="fa fa-plus-circle"></i>
-                                    Tambah</Link
-                                >
-                            </div>
-                            <div class="col-md-6 col-12 mb-2">
-                                <Link
-                                    href="/admin/stude  nts/import"
-                                    class="btn btn-md btn-success border-0 shadow w-100 text-white"
-                                    type="button"
-                                    ><i class="fa fa-file-excel"></i>
-                                    Import</Link
-                                >
-                            </div>
-                        </div>
+                    <div class="col-md-3 col-12 mb-2">
+                        <Link
+                            href="/admin/exams/create"
+                            class="btn btn-md btn-primary border-0 shadow w-100"
+                            type="button"
+                            ><i class="fa fa-plus-circle"></i> Tambah</Link
+                        >
                     </div>
-                    <div class="col-md-7 col-12 mb-2">
+                    <div class="col-md-9 col-12 mb-2">
                         <form @submit.prevent="handleSearch">
                             <div class="input-group">
                                 <input
@@ -62,11 +48,10 @@
                                         >
                                             No.
                                         </th>
-                                        <th class="border-0">Nisn</th>
-                                        <th class="border-0">Nama</th>
+                                        <th class="border-0">Ujian</th>
+                                        <th class="border-0">Pelajaran</th>
                                         <th class="border-0">Kelas</th>
-                                        <th class="border-0">Jenis Kelamin</th>
-                                        <th class="border-0">Password</th>
+                                        <th class="border-0">Jumlah Soal</th>
                                         <th
                                             class="border-0 rounded-end"
                                             style="width: 15%"
@@ -78,37 +63,42 @@
                                 <div class="mt-2"></div>
                                 <tbody>
                                     <tr
-                                        v-for="(
-                                            student, index
-                                        ) in students.data"
+                                        v-for="(exam, index) in exams.data"
                                         :key="index"
                                     >
                                         <td class="fw-bold text-center">
                                             {{
                                                 ++index +
-                                                (students.current_page - 1) *
-                                                    students.per_page
+                                                (exams.current_page - 1) *
+                                                    exams.per_page
                                             }}
                                         </td>
-                                        <td>{{ student.nisn }}</td>
-                                        <td>{{ student.name }}</td>
+                                        <td>{{ exam.title }}</td>
+                                        <td>{{ exam.lesson.title }}</td>
                                         <td class="text-center">
-                                            {{ student.classroom.title }}
+                                            {{ exam.classroom.title }}
                                         </td>
                                         <td class="text-center">
-                                            {{ student.gender }}
+                                            {{ exam.questions.length }}
                                         </td>
-                                        <td>{{ student.password }}</td>
                                         <td class="text-center">
                                             <Link
-                                                :href="`/admin/students/${student.id}/edit`"
+                                                :href="`/admin/exams/${exam.id}`"
+                                                class="btn btn-sm btn-primary border-0 shadow me-2"
+                                                type="button"
+                                                ><i
+                                                    class="fa fa-plus-circle"
+                                                ></i
+                                            ></Link>
+                                            <Link
+                                                :href="`/admin/exams/${exam.id}/edit`"
                                                 class="btn btn-sm btn-info border-0 shadow me-2"
                                                 type="button"
                                                 ><i class="fa fa-pencil-alt"></i
                                             ></Link>
                                             <button
                                                 @click.prevent="
-                                                    destroy(student.id)
+                                                    destroy(exam.id)
                                                 "
                                                 class="btn btn-sm btn-danger border-0"
                                             >
@@ -119,7 +109,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <Pagination :links="students.links" align="end" />
+                        <Pagination :links="exams.links" align="end" />
                     </div>
                 </div>
             </div>
@@ -156,7 +146,7 @@ export default {
 
     //props
     props: {
-        students: Object,
+        exams: Object,
     },
 
     //inisialisasi composition API
@@ -168,7 +158,7 @@ export default {
 
         //define method search
         const handleSearch = () => {
-            router.get("/admin/students", {
+            router.get("/admin/exams", {
                 //send params "q" with value from state "search"
                 q: search.value,
             });
@@ -186,11 +176,11 @@ export default {
                 confirmButtonText: "Yes, delete it!",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    router.delete(`/admin/students/${id}`);
+                    router.delete(`/admin/exams/${id}`);
 
                     Swal.fire({
                         title: "Deleted!",
-                        text: "Siswa Berhasil Dihapus!.",
+                        text: "Ujian Berhasil Dihapus!.",
                         icon: "success",
                         timer: 2000,
                         showConfirmButton: false,

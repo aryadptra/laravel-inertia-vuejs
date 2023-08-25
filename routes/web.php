@@ -32,5 +32,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/students/import', [\App\Http\Controllers\Admin\StudentController::class, 'storeImport'])->name('admin.students.storeImport');
         // route resource students
         Route::resource('/students', \App\Http\Controllers\Admin\StudentController::class, ['as' => 'admin']);
+        // route resource exams
+        Route::resource('/exams', \App\Http\Controllers\Admin\ExamController::class, ['as' => 'admin']);
     });
 });
