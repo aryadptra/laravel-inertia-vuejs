@@ -7,7 +7,10 @@ use App\Models\Lesson;
 use App\Models\Classroom;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Imports\QuestionsImport;
+use App\Models\Question;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExamController extends Controller
 {
@@ -186,5 +189,154 @@ class ExamController extends Controller
 
         //redirect
         return redirect()->route('admin.exams.index');
+    }
+
+    /**
+     * createQuestion
+     *
+     * @param  mixed $exam
+     * @return void
+     */
+    public function createQuestion(Exam $exam)
+    {
+        //render with inertia
+        return Inertia::render('Admin/Questions/Create', [
+            'exam' => $exam,
+        ]);
+    }
+
+    /**
+     * storeQuestion
+     *
+     * @param  mixed $request
+     * @param  mixed $exam
+     * @return void
+     */
+    public function storeQuestion(Request $request, Exam $exam)
+    {
+        //validate request
+        $request->validate([
+            'question'          => 'required',
+            'option_1'          => 'required',
+            'option_2'          => 'required',
+            'option_3'          => 'required',
+            'option_4'          => 'required',
+            'option_5'          => 'required',
+            'answer'            => 'required',
+        ]);
+
+        //create question
+        Question::create([
+            'exam_id'           => $exam->id,
+            'question'          => $request->question,
+            'option_1'          => $request->option_1,
+            'option_2'          => $request->option_2,
+            'option_3'          => $request->option_3,
+            'option_4'          => $request->option_4,
+            'option_5'          => $request->option_5,
+            'answer'            => $request->answer,
+        ]);
+
+        //redirect
+        return redirect()->route('admin.exams.show', $exam->id);
+    }
+
+    /**
+     * editQuestion
+     *
+     * @param  mixed $exam
+     * @param  mixed $question
+     * @return void
+     */
+    public function editQuestion(Exam $exam, Question $question)
+    {
+        //render with inertia
+        return inertia('Admin/Questions/Edit', [
+            'exam' => $exam,
+            'question' => $question,
+        ]);
+    }
+
+    /**
+     * updateQuestion
+     *
+     * @param  mixed $request
+     * @param  mixed $exam
+     * @param  mixed $question
+     * @return void
+     */
+    public function updateQuestion(Request $request, Exam $exam, Question $question)
+    {
+        //validate request
+        $request->validate([
+            'question'          => 'required',
+            'option_1'          => 'required',
+            'option_2'          => 'required',
+            'option_3'          => 'required',
+            'option_4'          => 'required',
+            'option_5'          => 'required',
+            'answer'            => 'required',
+        ]);
+
+        //update question
+        $question->update([
+            'question'          => $request->question,
+            'option_1'          => $request->option_1,
+            'option_2'          => $request->option_2,
+            'option_3'          => $request->option_3,
+            'option_4'          => $request->option_4,
+            'option_5'          => $request->option_5,
+            'answer'            => $request->answer,
+        ]);
+
+        //redirect
+        return redirect()->route('admin.exams.show', $exam->id);
+    }
+
+    /**
+     * destroyQuestion
+     *
+     * @param  mixed $exam
+     * @param  mixed $question
+     * @return void
+     */
+    public function destroyQuestion(Exam $exam, Question $question)
+    {
+        //delete question
+        $question->forceDelete();
+
+        //redirect
+        return redirect()->route('admin.exams.show', $exam->id);
+    }
+
+    /**
+     * import
+     *
+     * @return void
+     */
+    public function import(Exam $exam)
+    {
+        return Inertia::render('Admin/Questions/Import', [
+            'exam' => $exam
+        ]);
+    }
+
+    /**
+     * storeImport
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function storeImport(Request $request, Exam $exam)
+    {
+        $this->validate($request, [
+            'file' => 'required|mimes:csv,xls,xlsx'
+        ]);
+
+        // import data
+        Excel::import(new QuestionsImport(), $request->file('file'));
+
+        //redirect
+        return redirect()->route('admin.exams.show', $exam->id);
     }
 }

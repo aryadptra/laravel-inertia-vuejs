@@ -94,9 +94,93 @@
                                     </tr>
                                 </thead>
                                 <div class="mt-2"></div>
-                                <tbody></tbody>
+                                <tbody>
+                                    <tr
+                                        v-for="(question, index) in exam
+                                            .questions.data"
+                                        :key="index"
+                                    >
+                                        <td class="fw-bold text-center">
+                                            {{
+                                                ++index +
+                                                (exam.questions.current_page -
+                                                    1) *
+                                                    exam.questions.per_page
+                                            }}
+                                        </td>
+                                        <td>
+                                            <div
+                                                class="fw-bold"
+                                                v-html="question.question"
+                                            ></div>
+                                            <hr />
+                                            <ol type="A">
+                                                <li
+                                                    v-html="question.option_1"
+                                                    :class="{
+                                                        'text-success fw-bold':
+                                                            question.answer ==
+                                                            '1',
+                                                    }"
+                                                ></li>
+                                                <li
+                                                    v-html="question.option_2"
+                                                    :class="{
+                                                        'text-success fw-bold':
+                                                            question.answer ==
+                                                            '2',
+                                                    }"
+                                                ></li>
+                                                <li
+                                                    v-html="question.option_3"
+                                                    :class="{
+                                                        'text-success fw-bold':
+                                                            question.answer ==
+                                                            '3',
+                                                    }"
+                                                ></li>
+                                                <li
+                                                    v-html="question.option_4"
+                                                    :class="{
+                                                        'text-success fw-bold':
+                                                            question.answer ==
+                                                            '4',
+                                                    }"
+                                                ></li>
+                                                <li
+                                                    v-html="question.option_5"
+                                                    :class="{
+                                                        'text-success fw-bold':
+                                                            question.answer ==
+                                                            '5',
+                                                    }"
+                                                ></li>
+                                            </ol>
+                                        </td>
+                                        <td class="text-center">
+                                            <Link
+                                                :href="`/admin/exams/${exam.id}/questions/${question.id}/edit`"
+                                                class="btn btn-sm btn-info border-0 shadow me-2"
+                                                type="button"
+                                                ><i class="fa fa-pencil-alt"></i
+                                            ></Link>
+                                            <button
+                                                @click.prevent="
+                                                    destroy(
+                                                        exam.id,
+                                                        question.id
+                                                    )
+                                                "
+                                                class="btn btn-sm btn-danger border-0"
+                                            >
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
+                        <Pagination :links="exam.questions.links" align="end" />
                     </div>
                 </div>
             </div>
@@ -108,8 +192,14 @@
 //import layout
 import LayoutAdmin from "../../../Layouts/Admin.vue";
 
+//import component pagination
+import Pagination from "../../../Components/Pagination.vue";
+
 //import Heade and Link from Inertia
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, router } from "@inertiajs/vue3";
+
+//import sweet alert2
+import Swal from "sweetalert2";
 
 export default {
     //layout
@@ -119,12 +209,48 @@ export default {
     components: {
         Head,
         Link,
+        Pagination,
     },
 
     //props
     props: {
         errors: Object,
         exam: Object,
+    },
+
+    //inisialisasi composition API
+    setup() {
+        //define method destroy
+        const destroy = (exam_id, question_id) => {
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Anda tidak akan dapat mengembalikan ini!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    router.delete(
+                        `/admin/exams/${exam_id}/questions/${question_id}/destroy`
+                    );
+
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Soal Ujian Berhasil Dihapus!.",
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                }
+            });
+        };
+
+        //return
+        return {
+            destroy,
+        };
     },
 };
 </script>
