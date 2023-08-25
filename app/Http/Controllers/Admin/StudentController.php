@@ -7,6 +7,8 @@ use App\Models\Classroom;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
+use App\Imports\StudentsImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -75,6 +77,13 @@ class StudentController extends Controller
 
         //redirect
         return redirect()->route('admin.students.index');
+    }
+
+    /**
+     * Show controller
+     */
+    public function show()
+    {
     }
 
     /**
@@ -158,5 +167,36 @@ class StudentController extends Controller
 
         //redirect
         return redirect()->route('admin.students.index');
+    }
+
+    /**
+     * import students from excel
+     * 
+     * @return void
+     */
+    public function import()
+    {
+        return Inertia::render('Admin/Students/Import');
+    }
+
+    /**
+     * import students from excel
+     * 
+     * @oaran nuxed $request
+     * @return void
+     */
+    public function storeImport(Request $request)
+    {
+        //validate request
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        //import students
+        Excel::import(new StudentsImport, $request->file('file'));
+
+        //redirect
+        return redirect()->route('admin.students.index');
+        // return to_route('admin.students.index');
     }
 }
