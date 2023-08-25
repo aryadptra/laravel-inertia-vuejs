@@ -52,6 +52,9 @@ class ClassroomController extends Controller
         //validate request
         $request->validate([
             'title' => 'required|string|unique:classrooms'
+        ], [
+            'title.required' => 'Kolom kelas harus diisi!',
+            'title.unique' => 'Kelas sudah ada!',
         ]);
 
         //create classroom
@@ -115,7 +118,7 @@ class ClassroomController extends Controller
         $classroom = Classroom::findOrFail($id);
 
         //delete classroom
-        $classroom->delete();
+        $classroom->forceDelete();
 
         //redirect
         return to_route('admin.classrooms.index')->with('success', 'Data berhasil dihapus!');

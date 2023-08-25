@@ -112,7 +112,7 @@ class LessonController extends Controller
         $id = Lesson::findOrFail($id);
 
         // delete lesson
-        $id->delete();
+        $id->forceDelete();
 
         // return redirect with inertia
         return to_route('admin.lessons.index')->with('success', 'Data berhasil dihapus!');
